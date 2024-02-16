@@ -28,7 +28,7 @@
         app:srcCompat="@drawable/liste_joueurs" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonPlay"
         android:layout_width="214dp"
         android:layout_height="57dp"
         android:layout_marginTop="16dp"

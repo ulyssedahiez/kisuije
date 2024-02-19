@@ -1,4 +1,3 @@
-// PlayersAdapter.kt
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,7 @@ class PlayersAdapter(private val players: List<String>) : RecyclerView.Adapter<P
         return players.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val playerNameTextView: TextView = itemView.findViewById(R.id.playerNameTextView)
     }
 }

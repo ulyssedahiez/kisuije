@@ -8,13 +8,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 
-class PlayersRegisteryActivity : AppCompatActivity() {
+class NewGameActivity : AppCompatActivity() {
     private lateinit var containerLayout: LinearLayout
     private var playerCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_players_registery)
+        setContentView(R.layout.new_game_registery)
 
         containerLayout = findViewById(R.id.containerLayout)
     }

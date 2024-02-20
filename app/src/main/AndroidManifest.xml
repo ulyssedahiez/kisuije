@@ -13,17 +13,12 @@
         android:theme="@style/Theme.Kisuije"
         tools:targetApi="31">
         <activity
+            android:name=".PlayersList"
+            android:exported="false" />
+        <activity
             android:name=".NewGameActivity"
             android:exported="false" />
-        <activity
-            android:name=".adapters.palyersAdapters"
-            android:exported="false" />
-        <activity
-            android:name=".playersRegistery"
-            android:exported="false" />
-        <activity
-            android:name=".numbersPlayers"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

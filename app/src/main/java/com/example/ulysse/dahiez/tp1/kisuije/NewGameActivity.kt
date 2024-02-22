@@ -1,6 +1,8 @@
 package com.example.ulysse.dahiez.tp1.kisuije
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
@@ -20,6 +22,7 @@ class NewGameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_game)
         containerLayout = findViewById(R.id.containerLayout)
+
     }
 
     fun onAddPlayerButtonClick(view: View) {
@@ -137,4 +140,29 @@ class NewGameActivity : AppCompatActivity() {
         }
         builder.show()
     }
+
+    fun onvalidateButtonClick(view: View) {
+        // Créer une liste pour stocker les noms des joueurs
+        val playerNames = mutableListOf<String>()
+
+        // Parcourir les layouts pour extraire les noms des joueurs
+        for (i in 1 until containerLayout.childCount) {
+            val playerLayout = containerLayout.getChildAt(i) as? LinearLayout
+            if (playerLayout != null) {
+                val playerNameEditText = playerLayout.getChildAt(1) as? EditText
+                if (playerNameEditText != null) {
+                    val playerName = playerNameEditText.text.toString()
+                    playerNames.add(playerName)
+                }
+            }
+        }
+
+        // Utiliser le paramètre 'view' pour obtenir la référence au bouton qui a été cliqué
+        if (view.id == R.id.validate) {
+            val pageGame = Intent(this, GameActivity::class.java)
+            pageGame.putStringArrayListExtra("playerNames", ArrayList(playerNames))
+            startActivity(pageGame)
+        }
+    }
+
 }

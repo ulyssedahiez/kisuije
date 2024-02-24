@@ -32,16 +32,17 @@
         android:src="@drawable/logo_kisuije" />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="799dp">
 
         <LinearLayout
             android:id="@+id/scrollViewLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
 
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

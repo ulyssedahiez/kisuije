@@ -17,12 +17,12 @@ import androidx.core.content.ContextCompat
 class NewGameActivity : AppCompatActivity() {
     private lateinit var containerLayout: LinearLayout
     private var playerCount = 0
+    private val playerNameEditTextList = mutableListOf<EditText>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_game)
         containerLayout = findViewById(R.id.containerLayout)
-
     }
 
     fun onAddPlayerButtonClick(view: View) {
@@ -38,36 +38,55 @@ class NewGameActivity : AppCompatActivity() {
         val playerLayout = LinearLayout(this)
         playerLayout.orientation = LinearLayout.VERTICAL
 
-        val nameLayout = createNameLayout()
+        val nameLayout = createNameLayout(playerCount)
         playerLayout.addView(nameLayout)
 
-        val buttonsLayout = createButtonsLayout(nameLayout.getChildAt(1) as EditText)
+        val buttonsLayout = createButtonsLayout(playerCount)
         playerLayout.addView(buttonsLayout)
 
         return playerLayout
     }
 
-    private fun createNameLayout(): LinearLayout {
+
+    private fun createNameLayout(playerIndex: Int): LinearLayout {
         val nameLayout = LinearLayout(this)
         nameLayout.orientation = LinearLayout.HORIZONTAL
 
-        val textView = createTextView()
-        val playerNameEditText = createEditText()
+        val textView = createTextView(playerIndex)
+        val playerNameEditText = createEditText(playerIndex)
 
         nameLayout.addView(textView)
         nameLayout.addView(playerNameEditText)
         nameLayout.gravity = Gravity.CENTER
 
+        // Ajouter l'EditText à la liste
+        playerNameEditTextList.add(playerNameEditText)
+
         return nameLayout
     }
 
-    private fun createButtonsLayout(playerNameEditText: EditText): LinearLayout {
+    private fun createEditText(playerIndex: Int): EditText {
+        val playerNameEditText = EditText(this)
+        playerNameEditText.hint = "Nom du joueur"
+        val colorResId = R.color.yellow
+        val textColor = ContextCompat.getColor(this, colorResId)
+        playerNameEditText.setTextColor(textColor)
+        playerNameEditText.setHintTextColor(textColor)
+
+        // Attribuer un ID unique en fonction de l'index du joueur
+        playerNameEditText.id = View.generateViewId() + playerIndex
+        Log.d("playerNameEditText.id",playerNameEditText.id.toString())
+
+        return playerNameEditText
+    }
+
+    private fun createButtonsLayout(playerIndex: Int): LinearLayout {
         val buttonsLayout = LinearLayout(this)
         buttonsLayout.orientation = LinearLayout.HORIZONTAL
         buttonsLayout.gravity = Gravity.CENTER
 
         val btnImportPlayer = createButton("Importer") {
-            showImportPlayerDialog(playerNameEditText)
+            showImportPlayerDialog(playerIndex)
         }
         val btnRemovePlayer = createButton("Supprimer") {
             onRemovePlayerButtonClick(buttonsLayout.parent as LinearLayout)
@@ -88,25 +107,15 @@ class NewGameActivity : AppCompatActivity() {
         return buttonsLayout
     }
 
-    private fun createTextView(): TextView {
+    private fun createTextView(playerIndex: Int): TextView {
         val textView = TextView(this)
-        textView.text = "Joueur $playerCount : "
+        textView.text = "Joueur $playerIndex : "
         textView.textSize = 18f
         val colorResId = R.color.yellow
         val textColor = ContextCompat.getColor(this, colorResId)
         textView.setTextColor(textColor)
         textView.setTypeface(null, 1)
         return textView
-    }
-
-    private fun createEditText(): EditText {
-        val playerNameEditText = EditText(this)
-        playerNameEditText.hint = "Nom du joueur"
-        val colorResId = R.color.yellow
-        val textColor = ContextCompat.getColor(this, colorResId)
-        playerNameEditText.setTextColor(textColor)
-        playerNameEditText.setHintTextColor(textColor)
-        return playerNameEditText
     }
 
     private fun createButton(text: String, onClickListener: () -> Unit): Button {
@@ -125,14 +134,14 @@ class NewGameActivity : AppCompatActivity() {
         playerCount--
     }
 
-    private fun showImportPlayerDialog(playerNameEditText: EditText) {
+    private fun showImportPlayerDialog(playerIndex: Int) {
         val playerNames = arrayOf("Joueur 1", "Joueur 2", "Joueur 3")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Choisir un joueur existant")
 
         builder.setItems(playerNames) { _, which ->
             val selectedPlayer = playerNames[which]
-            playerNameEditText.setText(selectedPlayer)
+            playerNameEditTextList[playerIndex - 1].setText(selectedPlayer)
         }
 
         builder.setNegativeButton("Annuler") { dialog, _ ->
@@ -143,26 +152,19 @@ class NewGameActivity : AppCompatActivity() {
 
     fun onvalidateButtonClick(view: View) {
         // Créer une liste pour stocker les noms des joueurs
-        val playerNames = mutableListOf<String>()
+        val playerNames = ArrayList<String>()
 
-        // Parcourir les layouts pour extraire les noms des joueurs
-        for (i in 1 until containerLayout.childCount) {
-            val playerLayout = containerLayout.getChildAt(i) as? LinearLayout
-            if (playerLayout != null) {
-                val playerNameEditText = playerLayout.getChildAt(1) as? EditText
-                if (playerNameEditText != null) {
-                    val playerName = playerNameEditText.text.toString()
-                    playerNames.add(playerName)
-                }
-            }
+        for (i in 0 until playerCount) {
+            val playerNameEditText = playerNameEditTextList[i]
+            val playerName = playerNameEditText.text.toString()
+            playerNames.add(playerName)
         }
 
         // Utiliser le paramètre 'view' pour obtenir la référence au bouton qui a été cliqué
-        if (view.id == R.id.validate) {
+        if (view.id == R.id.btnValidate) {
             val pageGame = Intent(this, GameActivity::class.java)
             pageGame.putStringArrayListExtra("playerNames", ArrayList(playerNames))
             startActivity(pageGame)
         }
     }
-
 }

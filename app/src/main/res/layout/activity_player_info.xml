@@ -1,9 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    android:id="@+id/nestedScrollView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PlayerInfoActivity">
+    android:background="@color/background_color"
+    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/containerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/background_color">
+
+        <TextView
+            android:id="@+id/playerNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="Info du joueur :"
+            android:textColor="@color/yellow"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="Le joueur est un(e): "
+            android:textColor="@color/yellow"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/playerWordTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text=" "
+            android:textColor="@color/yellow"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:onClick="onPlayerWinButtonClick"
+            android:text="Le joueur à gagné"
+            android:textColor="@color/yellow" />
+
+        <TextView
+            android:id="@+id/playerScoreTextView"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="Le score du joueur est : "
+            android:textColor="@color/yellow"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

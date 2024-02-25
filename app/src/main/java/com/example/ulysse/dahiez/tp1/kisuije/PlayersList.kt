@@ -15,7 +15,7 @@ class PlayersList : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.button_back)
 
         // Liste de joueurs
-        val players = listOf("Joueur 1", "Joueur 2", "Joueur 3","Joueur 1", "Joueur 2", "Joueur 3","Joueur 1", "Joueur 2", "Joueur 3","Joueur 1", "Joueur 2", "Joueur 3","Joueur 1", "Joueur 2", "Joueur 3","Joueur 1", "Joueur 2", "Joueur 3","Joueur 1", "Joueur 2", "Joueur 3")
+        val players = listOf("Joueur 1", "Joueur 2", "Joueur 3")
 
         // Créer et ajouter des LinearLayout avec un TextView et un bouton "Supprimer" pour chaque joueur
         for (player in players) {

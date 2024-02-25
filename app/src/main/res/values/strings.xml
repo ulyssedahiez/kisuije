@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Kisuije</string>
     <string name="bouton_jouer">Jouer</string>
+    <string name="logo_description">Logo de Kisuije</string>
 </resources>

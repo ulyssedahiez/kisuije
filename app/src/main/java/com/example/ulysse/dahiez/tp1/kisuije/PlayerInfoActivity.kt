@@ -1,7 +1,9 @@
 package com.example.ulysse.dahiez.tp1.kisuije
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import java.io.Serializable
 
@@ -22,13 +24,23 @@ class PlayerInfoActivity : AppCompatActivity() {
 
         playerNameTextView.text = "Info du joueur : $playerName"
         playerWordTextView.text = assignedWord
-    }
 
-    fun onPlayerWinButtonClick() {
-        val playerScoreTextView = findViewById<TextView>(R.id.playerScoreTextView)
-        val playerScore = 1+1
+        // Trouver le bouton "Le joueur a gagné"
+        val playerWinButton = findViewById<Button>(R.id.playerWinButton)
+        // Ajouter un OnClickListener au bouton
+        playerWinButton.setOnClickListener {
+            // Créer une intention pour ouvrir WinnerActivity
+            val intent = Intent(this, winnerActivity::class.java)
+            // Ajouter le nom du joueur à l'intention
+            intent.putExtra("playerName", playerName)
+            // Démarrer l'activité WinnerActivity
+            startActivity(intent)
+        }
 
-        playerScoreTextView.text = "Le score est : $playerScore"
-        playerScoreTextView.visibility = TextView.VISIBLE
+        // Bouton de retour
+        val backButton = findViewById<Button>(R.id.backButton)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
     }
 }

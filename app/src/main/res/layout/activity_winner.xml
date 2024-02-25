@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_color"
+    android:padding="16dp"
+    tools:context=".winnerActivity">
+
+    <!-- Logo de Kisuije -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_kisuije"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/logo_description" />
+
+    <!-- Texte "(nom du joueur) a gagné !" -->
+    <TextView
+        android:id="@+id/winnerTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/yellow"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Bouton "Retour à la partie" -->
+    <Button
+        android:id="@+id/returnButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/white"
+        android:text="Retour à la partie"
+        android:textColor="@color/yellow" />
+
+</LinearLayout>

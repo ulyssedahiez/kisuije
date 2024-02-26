@@ -1,4 +1,4 @@
-package com.example.ulysse.dahiez.tp1.kisuije.database
+/*package com.example.ulysse.dahiez.tp1.kisuije.database
 
 import android.content.Context
 import androidx.room.Database
@@ -75,4 +75,4 @@ class Converters {
         }
         return playerList
     }
-}
+}*/

@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Kisuije"
         tools:targetApi="31">
         <activity
+            android:name=".BackButtonFragment"
+            android:exported="false" />
+        <activity
             android:name=".winnerActivity"
             android:exported="false" />
         <activity

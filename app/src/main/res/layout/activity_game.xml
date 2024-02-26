@@ -13,6 +13,12 @@
         android:orientation="vertical"
         android:background="@color/background_color">
 
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/containerLayout" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="51dp"

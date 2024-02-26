@@ -25,10 +25,10 @@ class NewGameActivity : AppCompatActivity() {
         containerLayout = findViewById(R.id.containerLayout)
     }
 
+    //Max 6 joueurs
     fun onAddPlayerButtonClick(view: View) {
         if (playerCount < 6) {
             playerCount++
-
             val playerLayout = createPlayerLayout()
             containerLayout.addView(playerLayout, 1)
         }

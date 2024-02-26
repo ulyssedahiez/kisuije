@@ -9,8 +9,8 @@ import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Star
 @Dao
 interface StarDao {
     @Insert
-    fun insert(star: Star?)
+    fun insert(star: Star)
 
-    @get:Query("SELECT * FROM star")
-    val allStars: List<Star?>?
+    @Query("SELECT * FROM star")
+    fun allStars(): List<Star?>?
 }

@@ -8,8 +8,8 @@ import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Game
 @Dao
 interface GameDao {
     @Insert
-    fun insert(game: Game?)
+    fun insert(game: Game)
 
-    @get:Query("SELECT * FROM game")
-    val allGames: List<Game?>?
+    @Query("SELECT * FROM game")
+    fun  getAllGames(): List<Game?>?
 }

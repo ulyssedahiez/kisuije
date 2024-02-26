@@ -8,8 +8,8 @@ import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Competitor
 @Dao
 interface CompetitorDao {
     @Insert
-    fun insert(competitor: Competitor?)
+    fun insert(competitor: Competitor)
 
-    @get:Query("SELECT * FROM competitor")
-    val allCompetitors: List<Competitor?>?
+    @Query("SELECT * FROM competitor")
+    fun getAllCompetitors(): List<Competitor?>?
 }

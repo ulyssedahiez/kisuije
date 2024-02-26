@@ -8,7 +8,7 @@ import android.widget.TextView
 import java.io.Serializable
 
 class PlayerInfoActivity : AppCompatActivity() {
-    data class Player(val name: String, val assignedWord: String) : Serializable
+    data class Player(val name: String, val assignedWord: String, var winner: Boolean) : Serializable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,6 +17,10 @@ class PlayerInfoActivity : AppCompatActivity() {
         // Récupérer les informations du joueur depuis l'intent
         val playerName = intent.getStringExtra("playerName")
         val assignedWord = intent.getStringExtra("playerObject")
+        val winnerPlayer = intent.getBooleanExtra("winnerPlayer", false)
+
+        // Récupérer la liste des joueurs
+        val playersList = intent.getSerializableExtra("playerList") as? MutableList<Player>
 
         // Afficher les informations du joueur
         val playerNameTextView = findViewById<TextView>(R.id.playerNameTextView)
@@ -25,16 +29,31 @@ class PlayerInfoActivity : AppCompatActivity() {
         playerNameTextView.text = "Info du joueur : $playerName"
         playerWordTextView.text = assignedWord
 
-        // Trouver le bouton "Le joueur a gagné"
-        val playerWinButton = findViewById<Button>(R.id.playerWinButton)
-        // Ajouter un OnClickListener au bouton
-        playerWinButton.setOnClickListener {
-            // Créer une intention pour ouvrir WinnerActivity
-            val intent = Intent(this, winnerActivity::class.java)
-            // Ajouter le nom du joueur à l'intention
-            intent.putExtra("playerName", playerName)
-            // Démarrer l'activité WinnerActivity
-            startActivity(intent)
+        if (winnerPlayer) {
+            val winnerTextView = findViewById<TextView>(R.id.winnerTextView)
+            winnerTextView.visibility = TextView.VISIBLE
+
+
+        } else {
+            val playerWinButton = findViewById<Button>(R.id.playerWinButton)
+
+            // Mettre à jour le statut du gagnant dans la liste des joueurs
+            val player = playersList?.find { it.name == playerName }
+            player?.winner = true
+
+            playerWinButton.setOnClickListener {
+                // Créer une intention pour ouvrir WinnerActivity
+                val intent = Intent(this, winnerActivity::class.java)
+
+                // Passez la liste mise à jour à l'activité suivante
+                intent.putExtra("playerList", playersList as Serializable)
+
+                // Ajouter le nom du joueur à l'intention
+                intent.putExtra("playerName", playerName)
+
+                // Démarrer l'activité WinnerActivity
+                startActivity(intent)
+            }
         }
 
         // Bouton de retour

@@ -17,7 +17,7 @@ class GameActivity : AppCompatActivity() {
     private var currentRound: Int = 1
     private lateinit var roundsTextView: TextView
 
-    data class Player(val name: String, val assignedWord: String) : Serializable
+    data class Player(val name: String, val assignedWord: String, val winner:Boolean) : Serializable
 
     // Liste des objets de la vie quotidienne
     private val lifeObjectsList: List<String> = listOf(
@@ -47,7 +47,7 @@ class GameActivity : AppCompatActivity() {
                 val assignedWord = lifeObjectsList.shuffled().firstOrNull() ?: "Mot par défaut"
 
                 // Créer un joueur avec le nom et le mot attribué
-                val player = Player(playerName, assignedWord)
+                val player = Player(playerName, assignedWord, false)
                 playersList.add(player)
 
                 // Créer le bouton du joueur et l'ajouter à la vue
@@ -64,32 +64,29 @@ class GameActivity : AppCompatActivity() {
         playerButton.text = player.name
         playerButton.setOnClickListener { navigateToPlayerInfo(player) }
 
-        // Centrer le texte des boutons au centre des boutons
         playerButton.gravity = Gravity.CENTER
 
         playerButton.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        //Ajouter margin bottom sur le bouton
+
         val params = playerButton.layoutParams as LinearLayout.LayoutParams
         params.setMargins(20, 20, 20, 20)
         playerButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.white)
         val colorResId = R.color.yellow
         val textColor = ContextCompat.getColor(this, colorResId)
         playerButton.setTextColor(textColor)
-
-        // Ajoutez des coins arrondis au bouton
-        playerButton.background = ContextCompat.getDrawable(this, R.drawable.rounded_button)
-
         return playerButton
     }
 
     private fun navigateToPlayerInfo(player: Player) {
         // Lancer une nouvelle activité pour afficher les informations du joueur
         val intent = Intent(this, PlayerInfoActivity::class.java)
-        intent.putExtra("playerName", player.name)
+        intent.putExtra("player", player.name)
         intent.putExtra("playerObject", player.assignedWord)
+        intent.putExtra("playerWinner", player.winner)
+        intent.putExtra("playerList", playersList as Serializable)
         startActivity(intent)
     }
 

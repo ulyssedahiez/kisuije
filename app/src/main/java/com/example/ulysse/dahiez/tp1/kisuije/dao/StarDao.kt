@@ -4,9 +4,9 @@ import androidx.room.Query
 
 @Dao
 interface StarDao {
-    @Query("SELECT * FROM stars")
-    fun getAll(): List<Star>
-
     @Insert
-    fun insertAll(vararg stars: Star)
+    fun insert(star: Star?)
+
+    @get:Query("SELECT * FROM star")
+    val allStars: List<Star?>?
 }

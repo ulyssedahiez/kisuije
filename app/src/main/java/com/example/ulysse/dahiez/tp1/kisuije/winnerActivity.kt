@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import java.io.Serializable
 
@@ -18,9 +17,6 @@ class winnerActivity : AppCompatActivity() {
         // Récupérer le nom du joueur de l'intent
         val playerName = intent.getStringExtra("playerName")
 
-        // Récupérer la liste des joueurs
-        val playersList = intent.getSerializableExtra("playerList") as? MutableList<PlayerInfoActivity.Player>
-
         // Afficher le texte "Nom du joueur a gagné !"
         val winnerTextView = findViewById<TextView>(R.id.winnerTextView)
         winnerTextView.text = "$playerName a gagné !"
@@ -29,9 +25,7 @@ class winnerActivity : AppCompatActivity() {
         val returnButton = findViewById<Button>(R.id.returnButton)
         // Ajouter un OnClickListener pour revenir à GameActivity
         returnButton.setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
-            // Passez la liste des joueurs à l'activité suivante
-            intent.putExtra("playerList", playersList as Serializable)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
     }

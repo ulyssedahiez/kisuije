@@ -38,7 +38,6 @@ class GameActivity : AppCompatActivity() {
 
         // Récupérer la liste des noms de joueurs depuis l'intent
         val playerNames = intent.getStringArrayListExtra("playerNames")
-        Log.d("GameActivity", "playerNames : $playerNames")
 
         if (playerNames != null) {
             for (playerName in playerNames) {
@@ -82,6 +81,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun navigateToPlayerInfo(player: Player) {
         // Lancer une nouvelle activité pour afficher les informations du joueur
+        Log.d("GameActivity", "playerName : ${player.name}")
         val intent = Intent(this, PlayerInfoActivity::class.java)
         intent.putExtra("player", player.name)
         intent.putExtra("playerObject", player.assignedWord)

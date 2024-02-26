@@ -8,7 +8,6 @@
     android:padding="16dp"
     tools:context=".winnerActivity">
 
-    <!-- Logo de Kisuije -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +16,6 @@
         android:scaleType="fitCenter"
         android:contentDescription="@string/logo_description" />
 
-    <!-- Texte "(nom du joueur) a gagné !" -->
     <TextView
         android:id="@+id/winnerTextView"
         android:layout_width="match_parent"
@@ -27,14 +25,13 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <!-- Bouton "Retour à la partie" -->
     <Button
         android:id="@+id/returnButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/white"
-        android:text="Retour à la partie"
+        android:text="Retour à l'accueil"
         android:textColor="@color/yellow" />
 
 </LinearLayout>

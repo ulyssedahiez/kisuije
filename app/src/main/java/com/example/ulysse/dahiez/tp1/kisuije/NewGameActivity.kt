@@ -12,12 +12,27 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
+import com.example.ulysse.dahiez.tp1.kisuije.database.MyDatabase
+import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Competitor
+import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Player
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class NewGameActivity : AppCompatActivity() {
     private lateinit var containerLayout: LinearLayout
     private var playerCount = 0
     private val playerNameEditTextList = mutableListOf<EditText>()
+
+    val MyDataBase: MyDatabase by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            com.example.ulysse.dahiez.tp1.kisuije.database.MyDatabase::class.java,
+            "MyDataBase.db"
+        ).build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,12 +169,31 @@ class NewGameActivity : AppCompatActivity() {
         // Créer une liste pour stocker les noms des joueurs
         val playerNames = ArrayList<String>()
 
+        val maBaseDeDonnees = MyDataBase
+        val utilisateurDao = maBaseDeDonnees.playerDao()
+
+
         for (i in 0 until playerCount) {
             val playerNameEditText = playerNameEditTextList[i]
             val playerName = playerNameEditText.text.toString()
             playerNames.add(playerName)
+            //Si l'utilisateur existe dans la liste ne rien faire sinon l'ajouter a la base de données
+            val nouvelUtilisateur = Player(name = playerName, nb_game = 2, total_point = 2)
+            lifecycleScope.launch (Dispatchers.IO){
+                utilisateurDao.insert(nouvelUtilisateur)
+            }
         }
 
+        lifecycleScope.launch(Dispatchers.IO) {
+            val utilisateurs = utilisateurDao.getAllPlayers()
+            utilisateurs?.let { nonNullUtilisateurs ->
+                for (utilisateur in nonNullUtilisateurs) {
+                    utilisateur?.let {
+                        Log.d("NewGameActivity", "Joueur ID: ${it.id_player}, Nom: ${it.name}")
+                    }
+                }
+            }
+        }
         // Utiliser le paramètre 'view' pour obtenir la référence au bouton qui a été cliqué
         if (view.id == R.id.btnValidate) {
             val pageGame = Intent(this, GameActivity::class.java)

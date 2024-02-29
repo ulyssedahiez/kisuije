@@ -10,8 +10,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.ulysse.dahiez.tp1.kisuije.database.MyDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.Serializable
-import com.example.ulysse.dahiez.tp1.kisuije.BackButtonFragment
 
 class GameActivity : AppCompatActivity() {
     private lateinit var containerLayout: LinearLayout
@@ -20,15 +24,8 @@ class GameActivity : AppCompatActivity() {
 
     data class Player(val name: String, val assignedWord: String, val winner:Boolean) : Serializable
 
-    // Liste des personnalités françaises
-    private val lifeObjectsList: List<String> = listOf(
-        "Marion Cotillard", "Omar Sy", "Jean Dujardin", "Sophie Marceau", "Vincent Cassel",
-        "Audrey Tautou", "Guillaume Canet", "Juliette Binoche", "Michel Platini", "Zinedine Zidane",
-        "Catherine Deneuve", "Johnny Hallyday", "Brigitte Bardot", "Serge Gainsbourg", "Isabelle Adjani",
-        "Gérard Depardieu", "Charlotte Gainsbourg", "Yannick Noah", "Vanessa Paradis", "Romain Duris",
-        "Carla Bruni", "Alain Delon", "Mylène Farmer", "Florence Foresti", "Jean-Paul Belmondo",
-        "Nolwenn Leroy", "Olivier Giroud", "Renaud", "Laetitia Casta", "David Guetta"
-    )
+    // Liste des stars en base de données
+    private val lifeObjectsList: MutableList<String> = mutableListOf()
 
     private val playersList = mutableListOf<Player>()
 
@@ -38,10 +35,6 @@ class GameActivity : AppCompatActivity() {
 
         containerLayout = findViewById(R.id.containerLayout)
         roundsTextView = findViewById(R.id.roundsTextView)
-
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragmentContainer, BackButtonFragment())
-        fragmentTransaction.commit()
 
         // Récupérer la liste des noms de joueurs depuis l'intent
         val playerNames = intent.getStringArrayListExtra("playerNames")
@@ -60,6 +53,18 @@ class GameActivity : AppCompatActivity() {
         }
         // Mettre à jour le TextView des tours
         updateRoundsTextView()
+
+
+// À l'intérieur de la fonction onCreate() de votre GameActivity
+        val starDao = MyDatabase.getMyDatabase(this).starDao()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val stars = starDao.allStars()
+            stars?.forEach { star ->
+                star?.name?.let {
+                    lifeObjectsList.add(it)
+                }
+            }
+        }
     }
 
     private fun createPlayerButton(player: Player): Button {

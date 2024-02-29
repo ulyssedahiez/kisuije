@@ -5,6 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Star(
-    @PrimaryKey val id_star: Int,
+    @PrimaryKey(autoGenerate = true) val id_star: Long = 0,
     val name: String
 )

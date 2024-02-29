@@ -11,6 +11,6 @@ interface StarDao {
     @Insert
     fun insert(star: Star)
 
-    @Query("SELECT * FROM star")
+    @Query("SELECT * FROM Star")
     fun allStars(): List<Star?>?
 }

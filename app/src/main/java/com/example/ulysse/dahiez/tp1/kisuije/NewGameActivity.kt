@@ -170,9 +170,21 @@ class NewGameActivity : AppCompatActivity() {
     }
 
     private fun onRemovePlayerButtonClick(playerLayout: LinearLayout) {
-        containerLayout.removeView(playerLayout)
+        // Récupérer l'index du joueur à partir de son layout parent
+        val playerIndex = containerLayout.indexOfChild(playerLayout)
+        // Supprimer le layout du joueur
+        containerLayout.removeViewAt(playerIndex)
+        // Supprimer l'EditText correspondant de la liste
+        playerNameEditTextList.removeAt(playerIndex)
+        // Mettre à jour les indices des EditText dans la liste
+        for (i in playerIndex until playerNameEditTextList.size) {
+            val editText = playerNameEditTextList[i]
+            editText.id -= 1
+        }
+        // Mettre à jour le nombre de joueurs
         playerCount--
     }
+
 
     private fun showImportPlayerDialog(playerIndex: Int) {
         val maBaseDeDonnees = MyDataBase
@@ -210,9 +222,6 @@ class NewGameActivity : AppCompatActivity() {
         val competitorDao = maBaseDeDonnees.competitorDao()
 
         lifecycleScope.launch(Dispatchers.IO) {
-            // Lire à partir de la base de données avant d'itérer sur les noms des joueurs existants
-            val allPlayerNames = utilisateurDao.getAllPlayerName() as List<String>
-
             // Ajouter les joueurs créés à la liste des noms des joueurs
             for (i in 0 until playerCount) {
                 val playerNameEditText = playerNameEditTextList[i]

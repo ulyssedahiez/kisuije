@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.graphics.Typeface
+import kotlinx.coroutines.android.awaitFrame
 
 class NewGameActivity : AppCompatActivity() {
     private lateinit var containerLayout: LinearLayout
@@ -59,6 +60,17 @@ class NewGameActivity : AppCompatActivity() {
             playerCount++
             val playerLayout = createPlayerLayout()
             containerLayout.addView(playerLayout, 1)
+            // Mettre à jour la liste des noms de joueurs existants lors de l'ajout d'un nouveau joueur
+            updateAllPlayerNames()
+        }
+    }
+
+    private fun updateAllPlayerNames() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val maBaseDeDonnees = MyDataBase
+            val utilisateurDao = maBaseDeDonnees.playerDao()
+            allPlayerNames.clear()
+            allPlayerNames.addAll(utilisateurDao.getAllPlayerName() as List<String>)
         }
     }
 
@@ -103,7 +115,7 @@ class NewGameActivity : AppCompatActivity() {
 
         // Attribuer un ID unique en fonction de l'index du joueur
         playerNameEditText.id = View.generateViewId() + playerIndex
-        Log.d("playerNameEditText.id", playerNameEditText.id.toString())
+        Log.d("playerNameEditText.id",playerNameEditText.id.toString())
 
         return playerNameEditText
     }
@@ -167,14 +179,14 @@ class NewGameActivity : AppCompatActivity() {
         val utilisateurDao = maBaseDeDonnees.playerDao()
 
         lifecycleScope.launch(Dispatchers.IO) {
-            // Ajouter tous les noms des joueurs dans la liste
-            val playerNames = allPlayerNames.toList()
+            // Mettre à jour la liste des noms de joueurs existants avant de récupérer les noms des joueurs importés
+            val allPlayerNames = utilisateurDao.getAllPlayerName() as List<String>
 
             withContext(Dispatchers.Main) {
-                val builder = AlertDialog.Builder(this@NewGameActivity) // Assurez-vous de mettre le nom correct de votre activité
+                val builder = AlertDialog.Builder(this@NewGameActivity)
                 builder.setTitle("Choisir un joueur existant")
 
-                val playerNamesArray = playerNames.toTypedArray()
+                val playerNamesArray = allPlayerNames.toTypedArray()
                 builder.setItems(playerNamesArray) { _, which ->
                     val playerNameEditText = playerNameEditTextList[playerIndex - 1]
                     playerNameEditText.setText(playerNamesArray[which])
@@ -188,7 +200,6 @@ class NewGameActivity : AppCompatActivity() {
         }
     }
 
-
     fun onvalidateButtonClick(view: View) {
         // Créer une liste pour stocker les noms des joueurs
         val playerNames = ArrayList<String>()
@@ -200,37 +211,39 @@ class NewGameActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             // Lire à partir de la base de données avant d'itérer sur les noms des joueurs existants
-            val allPlayerNames = allPlayerNames.toList()
+            val allPlayerNames = utilisateurDao.getAllPlayerName() as List<String>
 
-            // Ajouter les joueurs dans la base de données s'ils n'existent pas
+            // Ajouter les joueurs créés à la liste des noms des joueurs
             for (i in 0 until playerCount) {
                 val playerNameEditText = playerNameEditTextList[i]
                 val playerName = playerNameEditText.text.toString()
 
                 playerNames.add(playerName)
+            }
 
+            // Ajouter les joueurs dans la base de données s'ils n'existent pas déjà
+            for (playerName in playerNames) {
                 if (!allPlayerNames.contains(playerName)) {
                     val player = Player(name = playerName, nb_game = 0, total_point = 0)
                     utilisateurDao.insert(player)
                 }
                 // Si le joueur existe, récupérer son ID
                 val player = utilisateurDao.getPlayerByName(playerName)
-                val competitor =
-                    Competitor(
-                        id_player = player!!.id_player.toInt(),
-                        id_star = 0,
-                        nb_point = player.total_point,
-                        id_game = 0
-                    )
+                val competitor = Competitor(id_player = player!!.id_player.toInt(), id_star = 0, nb_point = player!!.total_point, id_game = 0)
                 competitorDao.insert(competitor)
+            }
+
+            withContext(Dispatchers.Main) {
+                awaitFrame()
             }
         }
 
-        // Créer une intention pour ouvrir GameActivity
+        // Créer une intent pour ouvrir GameActivity
         if (view.id == R.id.btnValidate) {
             val pageGame = Intent(this, GameActivity::class.java)
             pageGame.putStringArrayListExtra("playerNames", ArrayList(playerNames))
             startActivity(pageGame)
         }
     }
+
 }

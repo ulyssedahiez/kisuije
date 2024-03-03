@@ -30,12 +30,14 @@ class GameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadStarNamesFromDatabase()
+
         setContentView(R.layout.activity_game)
 
         containerLayout = findViewById(R.id.containerLayout)
         roundsTextView = findViewById(R.id.roundsTextView)
 
+
+        
         // Récupérer la liste des noms de joueurs depuis l'intent
         val playerNames = intent.getStringArrayListExtra("playerNames")
 

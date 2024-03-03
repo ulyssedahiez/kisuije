@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Competitor(
-    @PrimaryKey val id_competitor: Int,
+    @PrimaryKey(autoGenerate = true) val id_competitor: Long = 0,
     val id_player: Int,
     val id_star: Int,
     val nb_point: Int,

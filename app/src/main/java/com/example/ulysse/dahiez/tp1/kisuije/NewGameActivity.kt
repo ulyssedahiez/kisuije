@@ -12,13 +12,19 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.ulysse.dahiez.tp1.kisuije.database.MyDatabase
 import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Competitor
 import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Player
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class NewGameActivity : AppCompatActivity() {
@@ -150,51 +156,67 @@ class NewGameActivity : AppCompatActivity() {
     }
 
     private fun showImportPlayerDialog(playerIndex: Int) {
-        val playerNames = arrayOf("Joueur 1", "Joueur 2", "Joueur 3")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Choisir un joueur existant")
+        val maBaseDeDonnees = MyDataBase
+        val utilisateurDao = maBaseDeDonnees.playerDao()
 
-        builder.setItems(playerNames) { _, which ->
-            val selectedPlayer = playerNames[which]
-            playerNameEditTextList[playerIndex - 1].setText(selectedPlayer)
-        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            // Ajouter tous les noms des joueurs dans la liste
+            val playerNames = utilisateurDao.getAllPlayerName() as List<String>
 
-        builder.setNegativeButton("Annuler") { dialog, _ ->
-            dialog.dismiss()
+            withContext(Dispatchers.Main) {
+                val builder = AlertDialog.Builder(this@NewGameActivity) // Assurez-vous de mettre le nom correct de votre activité
+                builder.setTitle("Choisir un joueur existant")
+
+                val playerNamesArray = playerNames.toTypedArray()
+                builder.setItems(playerNamesArray) { _, which ->
+                    val playerNameEditText = playerNameEditTextList[playerIndex - 1]
+                    playerNameEditText.setText(playerNamesArray[which])
+                }
+
+                builder.setNegativeButton("Annuler") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                builder.show()
+            }
         }
-        builder.show()
     }
+
 
     fun onvalidateButtonClick(view: View) {
         // Créer une liste pour stocker les noms des joueurs
         val playerNames = ArrayList<String>()
 
         val maBaseDeDonnees = MyDataBase
+
         val utilisateurDao = maBaseDeDonnees.playerDao()
-
-
-        for (i in 0 until playerCount) {
-            val playerNameEditText = playerNameEditTextList[i]
-            val playerName = playerNameEditText.text.toString()
-            playerNames.add(playerName)
-            //Si l'utilisateur existe dans la liste ne rien faire sinon l'ajouter a la base de données
-            val nouvelUtilisateur = Player(name = playerName, nb_game = 2, total_point = 2)
-            lifecycleScope.launch (Dispatchers.IO){
-                utilisateurDao.insert(nouvelUtilisateur)
-            }
-        }
+        val competitorDao = maBaseDeDonnees.competitorDao()
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val utilisateurs = utilisateurDao.getAllPlayers()
-            utilisateurs?.let { nonNullUtilisateurs ->
-                for (utilisateur in nonNullUtilisateurs) {
-                    utilisateur?.let {
-                        Log.d("NewGameActivity", "Joueur ID: ${it.id_player}, Nom: ${it.name}")
-                    }
+        // Lire à partir de la base de données avant d'itérer sur les noms des joueurs existants
+            val allPlayerNames = utilisateurDao.getAllPlayerName() as List<String>
+
+            // Ajouter les joueur dans la base de donnée si ils n'existent pas
+            for (i in 0 until playerCount) {
+                val playerNameEditText = playerNameEditTextList[i]
+                val playerName = playerNameEditText.text.toString()
+
+                playerNames.add(playerName)
+
+                if (!allPlayerNames!!.contains(playerName)) {
+                    val player = Player(name = playerName, nb_game = 0, total_point = 0)
+                    utilisateurDao.insert(player)
                 }
+               //Si le joueur existe récupérer son id
+                val player = utilisateurDao.getPlayerByName(playerName)
+                val competitor = Competitor(id_player = player!!.id_player.toInt(), id_star = 0, nb_point = player!!.total_point, id_game = 0)
+                competitorDao.insert(competitor)
+            }
+            withContext(Dispatchers.Main) {
+                awaitFrame()
             }
         }
-        // Utiliser le paramètre 'view' pour obtenir la référence au bouton qui a été cliqué
+
+        // Créer une intent pour ouvrir GameActivity
         if (view.id == R.id.btnValidate) {
             val pageGame = Intent(this, GameActivity::class.java)
             pageGame.putStringArrayListExtra("playerNames", ArrayList(playerNames))

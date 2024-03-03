@@ -53,6 +53,30 @@ abstract class MyDatabase : RoomDatabase() {
                         val starDao = database.starDao()
                         starDao.insert(Star(name = "Brad Pitt"))
                         starDao.insert(Star(name = "Angelina Jolie"))
+                        starDao.insert(Star(name = "Jean Dujardin"))
+                        starDao.insert(Star(name = "Steeve Carel"))
+                        starDao.insert(Star(name = "Rambo"))
+                        starDao.insert(Star(name = "Walter White"))
+                        starDao.insert(Star(name = "Jacky Chan"))
+                        starDao.insert(Star(name = "Rihana"))
+                        starDao.insert(Star(name = "Kylian Mbappé"))
+                        starDao.insert(Star(name = "Raphael Nadal"))
+                        starDao.insert(Star(name = "Lebron James"))
+                        starDao.insert(Star(name = "Lewis Hamilton"))
+                        starDao.insert(Star(name = "Salt Bae"))
+                        starDao.insert(Star(name = "Steve Jobs"))
+                        starDao.insert(Star(name = "Bernard Arnaud"))
+                        starDao.insert(Star(name = "Dark Vador"))
+                        starDao.insert(Star(name = "Jean-Pierre Pernaud"))
+                        starDao.insert(Star(name = "Bob L'éponge"))
+                        starDao.insert(Star(name = "Homer Simpson"))
+                        starDao.insert(Star(name = "Léonardo Di Caprio"))
+                        starDao.insert(Star(name = "David Guetta"))
+                        starDao.insert(Star(name = "Ariana Grande"))
+                        starDao.insert(Star(name = "Lionel Messi"))
+
+
+
 
                         Log.d("MyDatabaseCallback", "Stars inserted successfully.")
                     }

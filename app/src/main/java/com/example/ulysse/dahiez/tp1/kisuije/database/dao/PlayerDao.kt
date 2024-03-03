@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Delete
 import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Player
 
 @Dao
@@ -20,4 +21,7 @@ interface PlayerDao {
     //Get all playerName
     @Query("SELECT name FROM Player")
     fun getAllPlayerName(): List<String?>?
+
+    @Delete
+    fun delete(player: Player)
 }

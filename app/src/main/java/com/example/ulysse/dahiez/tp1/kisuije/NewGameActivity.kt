@@ -12,27 +12,23 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.ulysse.dahiez.tp1.kisuije.database.MyDatabase
 import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Competitor
 import com.example.ulysse.dahiez.tp1.kisuije.database.entities.Player
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.android.awaitFrame
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+import android.graphics.Typeface
 
 class NewGameActivity : AppCompatActivity() {
     private lateinit var containerLayout: LinearLayout
     private var playerCount = 0
     private val playerNameEditTextList = mutableListOf<EditText>()
+    private val allPlayerNames = mutableListOf<String>() // Liste pour stocker les noms des joueurs existants
 
-    val MyDataBase: MyDatabase by lazy {
+    private val MyDataBase: MyDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
             com.example.ulysse.dahiez.tp1.kisuije.database.MyDatabase::class.java,
@@ -44,6 +40,17 @@ class NewGameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.new_game)
         containerLayout = findViewById(R.id.containerLayout)
+
+        // Récupérer les noms des joueurs existants lors de la création de l'activité
+        fetchAllPlayerNames()
+    }
+
+    private fun fetchAllPlayerNames() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val maBaseDeDonnees = MyDataBase
+            val utilisateurDao = maBaseDeDonnees.playerDao()
+            allPlayerNames.addAll(utilisateurDao.getAllPlayerName() as List<String>)
+        }
     }
 
     //Max 6 joueurs
@@ -96,7 +103,7 @@ class NewGameActivity : AppCompatActivity() {
 
         // Attribuer un ID unique en fonction de l'index du joueur
         playerNameEditText.id = View.generateViewId() + playerIndex
-        Log.d("playerNameEditText.id",playerNameEditText.id.toString())
+        Log.d("playerNameEditText.id", playerNameEditText.id.toString())
 
         return playerNameEditText
     }
@@ -135,7 +142,7 @@ class NewGameActivity : AppCompatActivity() {
         val colorResId = R.color.yellow
         val textColor = ContextCompat.getColor(this, colorResId)
         textView.setTextColor(textColor)
-        textView.setTypeface(null, 1)
+        textView.setTypeface(null, Typeface.BOLD)
         return textView
     }
 
@@ -161,7 +168,7 @@ class NewGameActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             // Ajouter tous les noms des joueurs dans la liste
-            val playerNames = utilisateurDao.getAllPlayerName() as List<String>
+            val playerNames = allPlayerNames.toList()
 
             withContext(Dispatchers.Main) {
                 val builder = AlertDialog.Builder(this@NewGameActivity) // Assurez-vous de mettre le nom correct de votre activité
@@ -192,31 +199,34 @@ class NewGameActivity : AppCompatActivity() {
         val competitorDao = maBaseDeDonnees.competitorDao()
 
         lifecycleScope.launch(Dispatchers.IO) {
-        // Lire à partir de la base de données avant d'itérer sur les noms des joueurs existants
-            val allPlayerNames = utilisateurDao.getAllPlayerName() as List<String>
+            // Lire à partir de la base de données avant d'itérer sur les noms des joueurs existants
+            val allPlayerNames = allPlayerNames.toList()
 
-            // Ajouter les joueur dans la base de donnée si ils n'existent pas
+            // Ajouter les joueurs dans la base de données s'ils n'existent pas
             for (i in 0 until playerCount) {
                 val playerNameEditText = playerNameEditTextList[i]
                 val playerName = playerNameEditText.text.toString()
 
                 playerNames.add(playerName)
 
-                if (!allPlayerNames!!.contains(playerName)) {
+                if (!allPlayerNames.contains(playerName)) {
                     val player = Player(name = playerName, nb_game = 0, total_point = 0)
                     utilisateurDao.insert(player)
                 }
-               //Si le joueur existe récupérer son id
+                // Si le joueur existe, récupérer son ID
                 val player = utilisateurDao.getPlayerByName(playerName)
-                val competitor = Competitor(id_player = player!!.id_player.toInt(), id_star = 0, nb_point = player!!.total_point, id_game = 0)
+                val competitor =
+                    Competitor(
+                        id_player = player!!.id_player.toInt(),
+                        id_star = 0,
+                        nb_point = player.total_point,
+                        id_game = 0
+                    )
                 competitorDao.insert(competitor)
-            }
-            withContext(Dispatchers.Main) {
-                awaitFrame()
             }
         }
 
-        // Créer une intent pour ouvrir GameActivity
+        // Créer une intention pour ouvrir GameActivity
         if (view.id == R.id.btnValidate) {
             val pageGame = Intent(this, GameActivity::class.java)
             pageGame.putStringArrayListExtra("playerNames", ArrayList(playerNames))

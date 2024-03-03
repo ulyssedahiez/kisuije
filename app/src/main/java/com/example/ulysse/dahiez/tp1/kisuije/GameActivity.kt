@@ -36,30 +36,7 @@ class GameActivity : AppCompatActivity() {
         containerLayout = findViewById(R.id.containerLayout)
         roundsTextView = findViewById(R.id.roundsTextView)
 
-
-        
-        // Récupérer la liste des noms de joueurs depuis l'intent
-        val playerNames = intent.getStringArrayListExtra("playerNames")
-
-        if (playerNames != null) {
-            // Charger les noms de stars depuis la base de données
-
-
-            for (playerName in playerNames) {
-                // Assigner un nom de star aléatoire à chaque joueur
-
-                val assignedStarName = assignRandomStarName()
-                Log.d("GameActivity","assignedStarName : "+assignedStarName )
-                // Créer un joueur avec le nom et le nom de star attribué
-                val player = Player(playerName, assignedStarName, false)
-                playersList.add(player)
-                // Créer le bouton du joueur et l'ajouter à la vue
-                val playerButton = createPlayerButton(player)
-                containerLayout.addView(playerButton)
-            }
-        }
-        // Mettre à jour le TextView des tours
-        updateRoundsTextView()
+        loadStarNamesFromDatabase()
     }
 
     // Fonction pour charger les noms de stars depuis la base de données
@@ -71,14 +48,41 @@ class GameActivity : AppCompatActivity() {
             Log.d("GameActivity", "Liste des noms de stars : $starNames")
             starNames?.let {
                 starNamesList.addAll(it)
-
+                createPlayers()
             }
         }
     }
 
+    // Fonction pour créer les joueurs une fois que les noms de stars sont chargés
+    private fun createPlayers() {
+        // Récupérer la liste des noms de joueurs depuis l'intent
+        val playerNames = intent.getStringArrayListExtra("playerNames")
+
+        if (playerNames != null) {
+            for (playerName in playerNames) {
+                // Assigner un nom de star aléatoire à chaque joueur
+                val assignedStarName = assignRandomStarName()
+                Log.d("GameActivity","assignedStarName : $assignedStarName")
+                // Créer un joueur avec le nom et le nom de star attribué
+                val player = Player(playerName, assignedStarName, false)
+                playersList.add(player)
+                // Créer le bouton du joueur et l'ajouter à la vue
+                runOnUiThread {
+                    val playerButton = createPlayerButton(player)
+                    containerLayout.addView(playerButton)
+                }
+            }
+        }
+        // Mettre à jour le TextView des tours
+        runOnUiThread {
+            updateRoundsTextView()
+        }
+    }
+
+
     // Fonction pour attribuer un nom de star aléatoire à un joueur
     private fun assignRandomStarName(): String {
-        Log.d("GameActivity", "in AssignedRandomStarName :: "+starNamesList)
+        Log.d("GameActivity", "in AssignedRandomStarName :: $starNamesList")
         return starNamesList.shuffled().firstOrNull() ?: "Nom par défaut"
     }
 

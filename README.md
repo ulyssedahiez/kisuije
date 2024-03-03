@@ -1,3 +1,5 @@
+![_4b64f5d4-ab23-4fb9-86c7-35803afb167d](https://github.com/ulyssedahiez/kisuije/assets/84959774/2e35500e-4baa-40bf-a6e8-e6f5e211aea5)
+
 # Kisuije
 
 ### Noms des membres : Dahiez Ulysse & Lecat Julien

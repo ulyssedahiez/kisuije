@@ -14,4 +14,4 @@ Les différents problèmes rencontrés :
 - La mise en place de la base de données. Problème de compatibilité avec les listes.
 - Appliquer l'architecture MVVM
 - Les différents étapes pour récupérer les données dynamiquement des InputText
-- Un manque de temps pour les d
+- Un manque de temps

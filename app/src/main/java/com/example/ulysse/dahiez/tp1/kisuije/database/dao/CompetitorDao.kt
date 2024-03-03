@@ -12,4 +12,8 @@ interface CompetitorDao {
 
     @Query("SELECT * FROM competitor")
     fun getAllCompetitors(): List<Competitor?>?
+
+    //delete all competitors
+    @Query("DELETE FROM competitor")
+    fun deleteAllCompetitors()
 }
